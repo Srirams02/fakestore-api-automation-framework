@@ -30,16 +30,17 @@ public class BaseTest {
                 .setContentType(ContentType.JSON)
                 .build();
 
-        // 🔥 LOGIN CALL
+        // Login call
         Response loginResponse = AuthAPI.login(request);
 
-        // 🔍 DEBUG (VERY IMPORTANT FOR CI)
+        // Debug response (useful for CI)
         System.out.println("===== LOGIN RESPONSE =====");
         loginResponse.prettyPrint();
 
-        // 🔥 SAFE TOKEN HANDLING (NO CRASH)
+        // Safe token handling
         try {
-            if (loginResponse.statusCode() == 200 &&
+            if (loginResponse != null &&
+                loginResponse.statusCode() == 200 &&
                 loginResponse.getContentType() != null &&
                 loginResponse.getContentType().contains("json")) {
 
@@ -49,11 +50,11 @@ public class BaseTest {
                     request.header("Authorization", "Bearer " + token);
                     System.out.println("Token extracted successfully");
                 } else {
-                    System.out.println("Token is null/empty");
+                    System.out.println("Token is null or empty");
                 }
 
             } else {
-                System.out.println("Login failed or not JSON response");
+                System.out.println("Login failed or returned non-JSON response");
             }
 
         } catch (Exception e) {
