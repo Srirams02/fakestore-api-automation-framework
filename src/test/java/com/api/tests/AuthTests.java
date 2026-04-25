@@ -21,7 +21,7 @@ public class AuthTests extends BaseTest {
         Response response = AuthAPI.login(request);
 
         response.then()
-                .statusCode(anyOf(is(200), is(401), is(500))); // flexible
+                .statusCode(anyOf(is(200), is(401), is(500)));
 
         if (response.getContentType() != null &&
                 response.getContentType().contains("json")) {

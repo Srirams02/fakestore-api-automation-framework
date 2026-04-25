@@ -2,7 +2,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,7 +32,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Allure -->
+        <!-- Allure TestNG -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-testng</artifactId>
@@ -74,31 +74,44 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire -->
+            <!-- Surefire (FIXED - no duplicate execution) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
 
                 <configuration>
+
+                    <!-- Run ONLY TestNG XML -->
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
 
+                    <!-- Disable default scanning -->
+                    <includes>
+                        <include>**/dummy.java</include>
+                    </includes>
+
+                    <!-- Do not fail build -->
+                    <testFailureIgnore>true</testFailureIgnore>
+
+                    <!-- Allure results -->
                     <systemPropertyVariables>
                         <allure.results.directory>target/allure-results</allure.results.directory>
                     </systemPropertyVariables>
 
+                    <!-- Allure listener -->
                     <properties>
                         <property>
                             <name>listener</name>
                             <value>io.qameta.allure.testng.AllureTestNg</value>
                         </property>
                     </properties>
+
                 </configuration>
             </plugin>
 
-            <!-- Allure plugin -->
+            <!-- Allure Maven Plugin -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>

@@ -17,13 +17,12 @@ public class ProductTests extends BaseTest {
     @Test(description = "Validate fetching all products")
     @Story("Get All Products")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Verify API returns list of products")
     public void getAllProductsTest() {
 
         Response response = ProductAPI.getAllProducts(request);
 
         response.then()
-                .statusCode(anyOf(is(200), is(500))) // API can fluctuate
+                .statusCode(200)
                 .body("$", not(empty()));
     }
 
@@ -67,7 +66,7 @@ public class ProductTests extends BaseTest {
         Response response = ProductAPI.getAllProducts(request);
 
         response.then()
-                .statusCode(anyOf(is(200), is(500)))
-                .time(lessThan(5000L)); // allow CI variability
+                .statusCode(200)
+                .time(lessThan(5000L));
     }
 }
