@@ -20,29 +20,44 @@ public class BaseTest {
     @BeforeMethod
     public void setup() throws IOException {
 
-        // 🔹 Load config
+        // Load config
         prop = new Properties();
         prop.load(new FileInputStream("src/test/resources/config.properties"));
 
-        // 🔹 Base request (no auth yet)
+        // Base request
         request = new RequestSpecBuilder()
                 .setBaseUri(prop.getProperty("baseUrl"))
                 .setContentType(ContentType.JSON)
                 .build();
 
-        // LOGIN
+        // 🔥 LOGIN CALL
         Response loginResponse = AuthAPI.login(request);
 
-        token = loginResponse.jsonPath().getString("token");
+        // 🔍 DEBUG (VERY IMPORTANT FOR CI)
+        System.out.println("===== LOGIN RESPONSE =====");
+        loginResponse.prettyPrint();
 
-        // (optional debug)
-        System.out.println("TOKEN: " + token);
+        // 🔥 SAFE TOKEN HANDLING (NO CRASH)
+        try {
+            if (loginResponse.statusCode() == 200 &&
+                loginResponse.getContentType() != null &&
+                loginResponse.getContentType().contains("json")) {
 
-        // ADD TOKEN TO HEADER (reused by all APIs)
-        request = new RequestSpecBuilder()
-                .setBaseUri(prop.getProperty("baseUrl"))
-                .setContentType(ContentType.JSON)
-                .addHeader("Authorization", "Bearer " + token)
-                .build();
+                token = loginResponse.jsonPath().getString("token");
+
+                if (token != null && !token.isEmpty()) {
+                    request.header("Authorization", "Bearer " + token);
+                    System.out.println("Token extracted successfully");
+                } else {
+                    System.out.println("Token is null/empty");
+                }
+
+            } else {
+                System.out.println("Login failed or not JSON response");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error extracting token: " + e.getMessage());
+        }
     }
 }
