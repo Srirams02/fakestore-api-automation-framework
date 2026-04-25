@@ -1,0 +1,100 @@
+name: API Automation CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 13 * * *"   # 6:30 PM IST
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: maven
+
+      - name: Run Tests
+        run: mvn clean test
+
+      - name: Install Allure
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.zip
+          unzip allure-2.27.0.zip
+          sudo mv allure-2.27.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+      - name: Generate Allure Report
+        if: always()
+        run: allure generate target/allure-results --clean -o target/allure-report
+
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: target/allure-report
+
+      - name: Extract Test Summary
+        if: always()
+        run: |
+          PASSED=$(grep -r '"status":"passed"' target/allure-results | wc -l || true)
+          FAILED=$(grep -r '"status":"failed"' target/allure-results | wc -l || true)
+          BROKEN=$(grep -r '"status":"broken"' target/allure-results | wc -l || true)
+          TOTAL=$((PASSED + FAILED + BROKEN))
+
+          echo "PASSED=$PASSED" >> $GITHUB_ENV
+          echo "FAILED=$FAILED" >> $GITHUB_ENV
+          echo "BROKEN=$BROKEN" >> $GITHUB_ENV
+          echo "TOTAL=$TOTAL" >> $GITHUB_ENV
+
+      - name: Send Email Report
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Fakestore API Automation Report - Run #${{ github.run_number }}"
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_USERNAME }}
+          html_body: |
+            <h2>Fakestore API Automation Report</h2>
+
+            <p><b>Total Tests:</b> ${{ env.TOTAL }}</p>
+            <p>Passed: ${{ env.PASSED }}</p>
+            <p>Failed: ${{ env.FAILED }}</p>
+            <p>Broken: ${{ env.BROKEN }}</p>
+
+            <h3>Chart</h3>
+            <img src="https://quickchart.io/chart?c={
+              type:'pie',
+              data:{
+                labels:['Passed','Failed','Broken'],
+                datasets:[{
+                  data:[${{ env.PASSED }},${{ env.FAILED }},${{ env.BROKEN }}]
+                }]
+              }
+            }" />
+
+            <h3>View Report</h3>
+            <a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}">
+              Open Run Details
+            </a>
+
+            <br><br>
+            <i>Triggered via GitHub Actions</i>
