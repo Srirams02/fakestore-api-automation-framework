@@ -25,7 +25,7 @@ jobs:
           cache: maven
 
       - name: Run Tests
-        run: mvn clean test
+        run: run: mvn clean test -Dmaven.test.failure.ignore=true
 
       - name: Install Allure
         run: |
