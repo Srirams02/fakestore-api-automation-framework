@@ -1,0 +1,11 @@
+{
+    "id": 11,
+    "userId": 1,
+    "date": "2020-02-03",
+    "products": [
+        {
+            "quantity": 2,
+            "productId": 1
+        }
+    ]
+}

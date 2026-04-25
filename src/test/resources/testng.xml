@@ -1,0 +1,16 @@
+<suite name="FakeStore API Suite">
+
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
+    <test name="All Tests">
+        <classes>
+            <class name="com.api.tests.ProductTests"/>
+            <class name="com.api.tests.CartTests"/>
+            <class name="com.api.tests.AuthTests"/>
+            <class name="com.api.tests.E2ETests"/>
+        </classes>
+    </test>
+
+</suite>

@@ -1,0 +1,8 @@
+com\api\utils\ResponseValidator.class
+com\api\tests\ProductTests.class
+com\api\tests\AuthTests.class
+com\api\base\BaseTest.class
+com\api\tests\CartTests.class
+com\api\utils\AllureLogger.class
+com\api\tests\E2ETests.class
+com\api\utils\AllureAttachment.class

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [FakeStore API Suite]">
+  <test thread-count="5" name="All Tests(failed)">
+    <classes>
+      <class name="com.api.tests.E2ETests">
+        <methods>
+          <include name="setup"/>
+          <include name="completeFlowTest"/>
+        </methods>
+      </class> <!-- com.api.tests.E2ETests -->
+      <class name="com.api.tests.ProductTests">
+        <methods>
+          <include name="setup"/>
+          <include name="getInvalidProductTest"/>
+        </methods>
+      </class> <!-- com.api.tests.ProductTests -->
+    </classes>
+  </test> <!-- All Tests(failed) -->
+</suite> <!-- Failed suite [FakeStore API Suite] -->

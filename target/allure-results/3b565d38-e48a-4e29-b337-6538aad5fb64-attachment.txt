@@ -1,0 +1,3 @@
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXIiOiJtb3JfMjMxNCIsImlhdCI6MTc3NzEwODI4NH0.2ETMTRazP2kp8Fhyyh4zMR4pT9Q3gFNZ2EPpYmUfx48"
+}
